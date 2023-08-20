@@ -1,0 +1,43 @@
+# Cleaning up Old Artifacts from Artifactory
+
+- name: Template the AQL file
+  template:
+    src: "{{ aql_file }}.j2"
+    dest: "{{ aql_file }}"
+
+- name: Get artifacts older than "{{ cleanUpOlderThan }}"
+  uri:
+    url: "{{ artifactory_url }}/{{ aql_api_path }}"
+    url_username: "{{ artifactory_username }}"
+    url_password: "{{ artifactory_password }}"
+    body_format: json
+    body:
+      "{{ lookup('file','{{ aql_file }}') }}"
+    force_basic_auth: "{{ force_basic_auth }}"
+    method: POST
+    return_content: yes
+    validate_certs: "{{ validate_certs }}"
+  register: artifacts_delete_list
+
+- name: Deleting artifacts older than "{{ cleanUpOlderThan }}"
+  uri:
+    url: "{{ artifactory_url }}/{{ item.repo }}/{{ item.path }}/{{ item.name }}"
+    url_username: "{{ artifactory_username }}"
+    url_password: "{{ artifactory_password }}"
+    force_basic_auth: "{{ force_basic_auth }}"
+    method: DELETE
+    return_content: yes
+    validate_certs: "{{ validate_certs }}"
+    status_code: 204
+  with_items: "{{ artifacts_delete_list.json.results }}"
+
+- name: Empty Trash Can
+  uri:
+    url: "{{ artifactory_url }}/{{ trashCanPath }}"
+    url_username: "{{ artifactory_username }}"
+    url_password: "{{ artifactory_password }}"
+    force_basic_auth: "{{ force_basic_auth }}"
+    method: POST
+    return_content: yes
+    status_code: 202
+    validate_certs: "{{ validate_certs }}"

@@ -1,0 +1,29 @@
+items.find(
+        {
+        "repo":"{{ artifactRepo }}",
+        "type":"file",
+        "$or":
+        [
+                {
+                "$and":
+                        [
+                                {"stat.downloads":{"$ne":null}},
+                                {"stat.downloaded":{"$before":"{{ cleanUpOlderThan }}"}}
+                        ]
+                },
+
+                {
+                "$and":
+                        [
+                                {"stat.downloads":{"$eq":null}},
+                                {"updated":{"$before":"{{ cleanUpOlderThan}}"}}
+                        ]
+                }
+        ],
+        "$or": [
+                        {"path":{"$match":"{{ artifactPath1 }}/*"}},
+                        {"path":{"$match":"{{ artifactPath2 }}/*"}}
+                ]
+        }
+)
+.include("name","path","repo","created","modified","updated","stat.downloads","stat.downloaded")

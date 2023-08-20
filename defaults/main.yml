@@ -1,0 +1,15 @@
+artifactory_url: http://jfrog.com/artifactory
+artifactory_username: ''
+artifactory_password: ''
+artifactPath1: ''
+artifactPath2: ''
+artifactRepo: ''
+
+force_basic_auth: yes
+validate_certs: no
+
+# 1w for week, 1m for Month, 1d for day, etc.
+cleanUpOlderThan: 2w
+aql_file: cleanup.aql
+aql_api_path: api/search/aql
+trashCanPath: api/trash/empty

@@ -1,0 +1,11 @@
+items.find(
+        {
+        "repo":"{{ artifactRepo }}",
+        "type":"file",
+        "updated":{"$before":"{{ cleanUpOlderThan }}"},
+        "$or": [
+                        {"path":{"$match":"{{ artifactPath1 }}/*"}},
+                        {"path":{"$match":"{{ artifactPath2 }}/*"}}
+                ]
+        }
+)
